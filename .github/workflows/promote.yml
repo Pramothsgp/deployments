@@ -17,7 +17,7 @@ jobs:
       APP: ${{ inputs.app }}
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: |
           [[ "$APP" =~ ^[a-z0-9-]+$ && -f "apps/$APP/dev.yaml" ]] || { echo "::error::Unknown app: $APP"; exit 1; }
           IMAGE=$(yq '.spec.template.spec.containers[0].image' "apps/$APP/dev.yaml") \
