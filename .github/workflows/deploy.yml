@@ -3,11 +3,11 @@ name: deploy
 on:
   push:
     branches: [main]
-    paths: ["apps/*/*.yaml"]
+    paths: ["apps/**.yaml"]
   workflow_dispatch:
     inputs:
-      file:
-        description: "Service file to apply, e.g. apps/uno/prod.yaml"
+      files:
+        description: "Space-separated service files, e.g. apps/wildcard/game/prod.yaml"
         required: true
 
 jobs:
@@ -23,20 +23,20 @@ jobs:
           fetch-depth: 0
       - id: list
         env:
-          INPUT: ${{ inputs.file }}
+          INPUT: ${{ inputs.files }}
           BEFORE: ${{ github.event.before }}
         run: |
           if [ -n "$INPUT" ]; then
             files="$INPUT"
           elif [ -z "${BEFORE//0/}" ]; then
-            files=$(git ls-files 'apps/*/*.yaml')
+            files=$(git ls-files 'apps/*/*/*.yaml')
           else
-            files=$(git diff --name-only --diff-filter=AM "$BEFORE" "$GITHUB_SHA" -- 'apps/*/*.yaml')
+            files=$(git diff --name-only --diff-filter=AM "$BEFORE" "$GITHUB_SHA" -- 'apps/*/*/*.yaml')
           fi
           for f in $files; do
-            [[ "$f" =~ ^apps/[a-z0-9-]+/(dev|prod)\.yaml$ && -f "$f" ]] || { echo "::error::Bad path: $f"; exit 1; }
+            [[ "$f" =~ ^apps/[a-z0-9-]+/[a-z0-9-]+/(dev|prod)\.yaml$ && -f "$f" ]] || { echo "::error::Bad path: $f"; exit 1; }
           done
-          echo "targets=$(printf '%s\n' "$files" | jq -Rsc 'split("\n") | map(select(length > 0) | {file: ., env: (split("/")[2] | rtrimstr(".yaml"))})')" >> "$GITHUB_OUTPUT"
+          echo "targets=$(echo "$files" | tr ' ' '\n' | jq -Rsc 'split("\n") | map(select(length > 0) | {file: ., env: (split("/")[3] | rtrimstr(".yaml"))})')" >> "$GITHUB_OUTPUT"
 
   apply:
     needs: changes
