@@ -1,0 +1,31 @@
+name: promote
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "App to promote from dev to prod"
+        required: true
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    env:
+      APP: ${{ inputs.app }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          [[ "$APP" =~ ^[a-z0-9-]+$ && -f "apps/$APP/dev.yaml" ]] || { echo "::error::Unknown app: $APP"; exit 1; }
+          IMAGE=$(yq '.spec.template.spec.containers[0].image' "apps/$APP/dev.yaml") \
+            yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE)' "apps/$APP/prod.yaml"
+          if git diff --quiet; then echo "prod already matches dev"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qam "Promote $APP to prod"
+          git push --quiet
+          # Pushes made with GITHUB_TOKEN don't trigger workflows, so start the deploy explicitly.
+          gh workflow run deploy.yml -f file="apps/$APP/prod.yaml"
