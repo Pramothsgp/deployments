@@ -30,7 +30,7 @@ spec:
               memory: 512Mi
           env:
             - name: BETTER_AUTH_URL
-              value: https://wildcard-game-prod-682886521292.asia-south1.run.app
+              value: https://wildcard.pramothsgp.me
             - name: ADMIN_EMAILS
               value: "pramothsgp@gmail.com"
             - name: DATABASE_URL
