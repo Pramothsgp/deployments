@@ -27,7 +27,7 @@ spec:
               memory: 512Mi
           env:
             - name: BETTER_AUTH_URL
-              value: https://attendance-employee-dev-682886521292.asia-south1.run.app
+              value: https://my.attendance.dev.pramothsgp.me
             - name: ADMIN_EMAILS
               value: "pramothsgp@gmail.com"
             - name: DATABASE_URL
