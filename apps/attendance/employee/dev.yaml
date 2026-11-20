@@ -18,7 +18,7 @@ spec:
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-        - image: asia-southeast1-docker.pkg.dev/pramoth-apps-2026/attendance/employee:9f2a181ae544297adf8b0dcc20a657b5003f61e6
+        - image: asia-southeast1-docker.pkg.dev/pramoth-apps-2026/attendance/employee:5382145acb2568e1a95d3c0a09d07f6f6059bddd
           ports:
             - containerPort: 8080
           resources:
