@@ -21,7 +21,7 @@ spec:
       containerConcurrency: 80
       timeoutSeconds: 3600
       containers:
-        - image: asia-southeast1-docker.pkg.dev/pramoth-apps-2026/wildcard/game:fff240a5126c3726dc12589791feef52a3f7d107
+        - image: asia-southeast1-docker.pkg.dev/pramoth-apps-2026/wildcard/game:d991560e8c71f2213925b805a6daaec5d764142e
           ports:
             - containerPort: 8080
           resources:
